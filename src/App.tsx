@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // 1. Define the Task type
 interface Task {
@@ -9,8 +9,16 @@ interface Task {
 
 function App() {
   // 2. Manage tasks
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const storedTasks = localStorage.getItem('my-tasks');
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  });
   const [input, setInput] = useState<string>('');
+
+  useEffect(() => {
+    localStorage.setItem('my-tasks', JSON.stringify(tasks));
+  }, [tasks]);
+  
 
   // 3. Add new task
   const handleAdd = () => {
@@ -35,42 +43,63 @@ function App() {
     const filteredTasks = tasks.filter((task) => task.id !== id);
     setTasks(filteredTasks);
   };
-  
+
 
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>📝 To-Do App</h2>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Add a new task"
-      />
-      <button onClick={handleAdd}>Add</button>
+    <div className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
+  <h2 className="text-2xl font-bold mb-6 text-gray-800">📝 To-Do App</h2>
+  <div className="flex mb-6">
+    <input
+      type="text"
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      placeholder="Add a new task"
+      className="flex-1 px-4 py-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
+    />
+    <button 
+      onClick={handleAdd}
+      className="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 transition-colors duration-200"
+    >
+      Add
+    </button>
+  </div>
 
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id} style={{ marginBottom: '0.5rem' }}>
-            <span
-              style={{
-                textDecoration: task.completed ? 'line-through' : 'none',
-                marginRight: '1rem',
-              }}
-            >
-              {task.text}
-            </span>
-            <button onClick={() => toggleComplete(task.id)}>
-              {task.completed ? 'Undo' : 'Done'}
-            </button>
-            <button onClick={() => deleteTask(task.id)} style={{ marginLeft: '0.5rem' }}>
-              ❌
-            </button>
-          </li>
-        ))}
-      </ul>
-
-    </div>
+  <ul className="space-y-2">
+    {tasks.map((task) => (
+      <li 
+        key={task.id}
+        className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded hover:bg-gray-100"
+      >
+        <span
+          className={`flex-1 mr-4 ${
+            task.completed ? 'line-through text-gray-500' : 'text-gray-800'
+          }`}
+        >
+          {task.text}
+        </span>
+        <div className="flex items-center">
+          <button 
+            onClick={() => toggleComplete(task.id)}
+            className={`px-3 py-1 rounded ${
+              task.completed 
+                ? 'bg-gray-500 hover:bg-gray-600' 
+                : 'bg-green-500 hover:bg-green-600'
+            } text-white transition-colors duration-200 text-sm`}
+          >
+            {task.completed ? 'Undo' : 'Done'}
+          </button>
+          <button 
+            onClick={() => deleteTask(task.id)}
+            className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200 text-sm"
+          >
+            ❌
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
   );
 }
 
