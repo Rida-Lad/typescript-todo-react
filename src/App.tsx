@@ -16,6 +16,8 @@ function App() {
   const [input, setInput] = useState<string>('');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState('');
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+
 
 
   useEffect(() => {
@@ -68,6 +70,13 @@ function App() {
     setTasks(activeTasks);
   };
 
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'active') return !task.completed;
+    if (filter === 'completed') return task.completed;
+    return true;
+  });
+  
+
 
 
 
@@ -100,7 +109,7 @@ function App() {
       </div>
 
       <ul className="space-y-2">
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           editingId === task.id ? (
             <>
               <input
@@ -136,6 +145,26 @@ function App() {
           )
         ))}
       </ul>
+      <div className="flex gap-4 mt-4">
+        <button
+          onClick={() => setFilter('all')}
+          className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+        >
+          All
+        </button>
+        <button
+          onClick={() => setFilter('active')}
+          className={`px-4 py-2 rounded ${filter === 'active' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+        >
+          Active
+        </button>
+        <button
+          onClick={() => setFilter('completed')}
+          className={`px-4 py-2 rounded ${filter === 'completed' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+        >
+          Completed
+        </button>
+      </div>
     </div>
   );
 }
