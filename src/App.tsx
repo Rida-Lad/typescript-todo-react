@@ -63,6 +63,12 @@ function App() {
   };
 
 
+  const clearCompleted = () => {
+    const activeTasks = tasks.filter(task => !task.completed);
+    setTasks(activeTasks);
+  };
+
+
 
 
   return (
@@ -82,6 +88,15 @@ function App() {
         >
           Add
         </button>
+        {tasks.some(task => task.completed) && (
+          <button
+            onClick={clearCompleted}
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Clear Completed Tasks
+          </button>
+        )}
+
       </div>
 
       <ul className="space-y-2">
