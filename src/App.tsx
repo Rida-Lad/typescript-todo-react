@@ -24,6 +24,20 @@ function App() {
     setInput('');
   };
 
+  const toggleComplete = (id: number) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  const deleteTask = (id: number) => {
+    const filteredTasks = tasks.filter((task) => task.id !== id);
+    setTasks(filteredTasks);
+  };
+  
+
+
   return (
     <div style={{ padding: '2rem' }}>
       <h2>📝 To-Do App</h2>
@@ -37,11 +51,25 @@ function App() {
 
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>
-            {task.text} {task.completed ? '✅' : ''}
+          <li key={task.id} style={{ marginBottom: '0.5rem' }}>
+            <span
+              style={{
+                textDecoration: task.completed ? 'line-through' : 'none',
+                marginRight: '1rem',
+              }}
+            >
+              {task.text}
+            </span>
+            <button onClick={() => toggleComplete(task.id)}>
+              {task.completed ? 'Undo' : 'Done'}
+            </button>
+            <button onClick={() => deleteTask(task.id)} style={{ marginLeft: '0.5rem' }}>
+              ❌
+            </button>
           </li>
         ))}
       </ul>
+
     </div>
   );
 }
